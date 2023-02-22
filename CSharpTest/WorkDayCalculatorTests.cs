@@ -68,5 +68,21 @@ namespace CSharpTest
 
             Assert.IsTrue(result.Equals(new DateTime(2021, 5, 02)));
         }
+
+        [TestMethod]
+        public void TestWeekendNotTypTest()
+        {
+            DateTime startDate = new DateTime(2021, 4, 21);
+            int count = 2;
+            WeekEnd[] weekends = new WeekEnd[2]
+            {
+                new WeekEnd(new DateTime(2021, 4, 21), new DateTime(2021, 4, 22)),
+                new WeekEnd(new DateTime(2021, 4, 25), new DateTime(2021, 4, 26))
+            };
+
+            DateTime result = new WorkDayCalculator().Calculate(startDate, count, weekends);
+
+            Assert.IsTrue(result.Equals(new DateTime(2021, 5, 27)));
+        }
     }
 }

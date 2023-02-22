@@ -11,20 +11,31 @@ namespace CSharpTest
         public DateTime Calculate(DateTime startDate, int dayCount, WeekEnd[] weekEnds)
         {
             DateTime DayOfResults = startDate;
-            dayCount -= 1;
+            if (dayCount > 1)
+                dayCount -= 1;
 
             if (weekEnds != null && dayCount > 0)
             {
                 foreach (WeekEnd weekEnd in weekEnds)
                 {
-                    int EndOfWeekDays = (weekEnd.StartDate - DayOfResults).Days - 1;
-
-                    if (EndOfWeekDays > 0 || EndOfWeekDays == 0)
+                    int workingDays;
+                    bool isItWeekEndDay = DayOfResults >= weekEnd.StartDate && DayOfResults <= weekEnd.EndDate;
+                    if (isItWeekEndDay)
                     {
-                        if (dayCount - EndOfWeekDays >= 0)
+                        workingDays = 0;
+                        DayOfResults = weekEnd.EndDate.AddDays(1);
+                    }
+                    else
+                    {
+                        workingDays = (weekEnd.StartDate - DayOfResults).Days;
+                    }
+
+                    if (workingDays >= 0)
+                    {
+                        if (dayCount - workingDays >= 0)
                         {
-                            DayOfResults = DayOfResults.AddDays(EndOfWeekDays);
-                            dayCount -= EndOfWeekDays;
+                            DayOfResults = DayOfResults.AddDays(workingDays);
+                            dayCount -= workingDays;
                         }
                         else
                         {
@@ -32,11 +43,12 @@ namespace CSharpTest
                             dayCount = 0;
                         }
 
-                        if (dayCount > 0)
+                        if (dayCount > 0 && !isItWeekEndDay)
                         {
                             int daysInWeekEnd = (weekEnd.EndDate - weekEnd.StartDate).Days + 1;
                             DayOfResults = DayOfResults.AddDays(daysInWeekEnd);
                         }
+                        
                     }
                 }
             }
